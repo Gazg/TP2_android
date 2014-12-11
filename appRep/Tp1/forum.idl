@@ -1,0 +1,30 @@
+module forum {
+
+	struct Message {
+		string title;
+		string author ;
+		string date;
+		string body;
+	};
+	
+	typedef sequence < Message > MessageSet;
+	exception Reject { string message ; };
+	interface Forum {
+		
+		readonly attribute string theme;
+		readonly attribute string moderator;
+		boolean postMessage( in Message m ) raises (Reject);
+		Message getMessage( in string title );
+		boolean removeMessage( in string title ) raises (Reject);
+		MessageSet messageList();
+		void getInfo ( out string theme , out string moderator , out long size );
+	};
+
+	interface ForumAdmin{
+		attribute string theme;
+		attribute string moderator;
+	
+	};
+
+};
+
