@@ -56,4 +56,6 @@ public class MyClockView extends View {
         canvas.drawRect(-2,(-height/2)+height/10,2,0,myPaint);
         canvas.restore();
     }
+
+
 }

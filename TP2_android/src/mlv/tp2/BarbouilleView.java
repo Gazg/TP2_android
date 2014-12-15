@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,64 +17,82 @@ import java.util.Map;
  * Created by Florian on 11/12/2014.
  */
 public class BarbouilleView extends View{
-    private Paint firstFinger;
-    private Paint secondFinger;
-    private Paint thirdFinger;
+    private Paint myPaint;
+    private ArrayList<Point> points ;
 
-    private HashMap<Map.Entry<Integer,Integer>,Integer> grid;
+
     public BarbouilleView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        firstFinger = new Paint();
-        secondFinger = new Paint();
-        thirdFinger=new Paint();
+        myPaint = new Paint();
+        points = new ArrayList<Point>();
 
-        firstFinger.setColor(Color.BLUE);
-        secondFinger.setColor(Color.GREEN);
-        thirdFinger.setColor(Color.RED);
-       grid = new HashMap<Map.Entry<Integer, Integer>, Integer>();
     }
+
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
+        float  x;
+        float y;
         switch (event.getAction() & MotionEvent.ACTION_MASK)
         {
             case MotionEvent.ACTION_DOWN :
-                grid.put(new AbstractMap.SimpleEntry<Integer, Integer>((int)event.getX(),(int)event.getY()),event.getPointerId(event.getActionIndex()));
-                invalidate((int)event.getX(),(int)event.getY(),(int)event.getX(),(int)event.getY());
+                points.add(new Point(event.getX(),event.getY(),Color.BLUE));
                 break;
             case MotionEvent.ACTION_POINTER_DOWN :
-                grid.put(new AbstractMap.SimpleEntry<Integer, Integer>((int)event.getX(),(int)event.getY()),event.getPointerId(event.getActionIndex()));
-                break;
-            case MotionEvent.ACTION_MOVE :
-                int x = event.getPointerCount();
-                for (int i= 0;i<x;i++){
-                    int index = event.getPointerId(i);
-                    grid.put(new AbstractMap.SimpleEntry<Integer, Integer>((int)event.getX(index),(int)event.getY(index)),index);
+             x  = event.getX();
+                 y = event.getY();
+                switch (event.getPointerId(event.getActionIndex())){
+                    case 1:
+                        points.add(new Point(x, y, Color.GREEN));
+                        break;
+                    case 2:
+                        points.add(new Point(x, y, Color.RED));
+                        break;
+                    default:
+                        //ffs
+                        break;
                 }
                 break;
-            case MotionEvent.ACTION_POINTER_UP :
+            case MotionEvent.ACTION_MOVE :
+                int j = event.getPointerCount();
+                for (int i= 0;i<j;i++){
 
-            case MotionEvent.ACTION_UP :
+                    int id = event.getPointerId(i);
+                    x= event.getX(event.findPointerIndex(id));
+                    y = event.getY(event.findPointerIndex(id));
+                    switch (id){
+                        case 0:
+                            points.add(new Point(x, y, Color.BLUE));
+                            break;
+                        case 1:
+                            points.add(new Point(x, y, Color.GREEN));
+                            break;
+                        case 2:
+                            points.add(new Point(x, y, Color.RED));
+                            break;
+                        default:
+                            //ffs
+                            break;
+                    }
+                }
+                break;
 
         }
+        invalidate();
         return true;
     }
 
+
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        int left,right,top,bot;
-        left = canvas.getClipBounds().left;
-        right = canvas.getClipBounds().right;
-        top = canvas.getClipBounds().top;
-        bot = canvas.getClipBounds().bottom;
-
-
-        Integer index = grid.get(new AbstractMap.SimpleEntry<Integer, Integer>(top,right));
-        if(index!=null){
-            //draw
-
+        for (Point point : points) {
+            myPaint.setColor(point.getColor());
+            canvas.drawCircle(point.getX(),point.getY(),10,myPaint);
         }
 
     }
+
+
 }

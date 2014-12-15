@@ -62,6 +62,7 @@ public class Chrono extends Activity {
     public void resetChrono(View view) {
         startTime = 0;
         MyClockView t = (MyClockView) findViewById(R.id.view);
+
         t.setElapsedTime(startTime);
         t.invalidate();
     }
